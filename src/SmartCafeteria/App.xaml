@@ -1,0 +1,36 @@
+<Application x:Class="SmartCafeteria.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:SmartCafeteria.Converters">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Bundled app-wide inherited default font: Cairo (OFL, variable font). Inherited app-wide (inherited attached
+                 TextElement.FontFamily), NOT set per-control. -->
+            <FontFamily x:Key="AppFontFamily">pack://application:,,,/Fonts/Cairo.ttf#Cairo</FontFamily>
+
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <conv:StatusToColorConverter x:Key="StatusToColorConverter" />
+            <conv:InventoryToVisibilityConverter x:Key="InventoryToVisibilityConverter" />
+            <conv:StatusToPreparingVisibilityConverter x:Key="StatusToPreparingVisibilityConverter" />
+            <conv:StatusToReadyVisibilityConverter x:Key="StatusToReadyVisibilityConverter" />
+            <conv:StatusToCompletedVisibilityConverter x:Key="StatusToCompletedVisibilityConverter" />
+            <conv:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
+            <conv:EnumArabicNameConverter x:Key="EnumArabicNameConverter" />
+            <conv:NullToInverseVisibilityConverter x:Key="NullToInverseVisibilityConverter" />
+            <conv:NonEmptyStringToVisibilityConverter x:Key="NonEmptyStringToVisibilityConverter" />
+            <conv:PurchaseOrderStatusToVisibilityConverter x:Key="PurchaseOrderStatusToVisibilityConverter" />
+            <conv:StockLevelToColorConverter x:Key="StockLevelToColorConverter" />
+            <conv:CurrencyFormatConverter x:Key="CurrencyFormatConverter" />
+
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Pure-WPF Fluent light theme: app's own green/white branding, control styles and data templates. -->
+                <ResourceDictionary Source="Resources/Strings.ar.xaml" />
+                <ResourceDictionary Source="Themes/GreenWhiteTheme.xaml" />
+                <ResourceDictionary Source="Themes/ControlStyles.xaml" />
+                <ResourceDictionary Source="Themes/DataTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

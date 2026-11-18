@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Cafeteria.Api</RootNamespace>
+    <UserSecretsId>cafeteria-remote-platform-api</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cafeteria.Application\Cafeteria.Application.csproj" />
+    <ProjectReference Include="..\Cafeteria.Contracts\Cafeteria.Contracts.csproj" />
+    <ProjectReference Include="..\Cafeteria.Domain\Cafeteria.Domain.csproj" />
+    <ProjectReference Include="..\Cafeteria.Infrastructure\Cafeteria.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.15">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.15" />
+  </ItemGroup>
+</Project>

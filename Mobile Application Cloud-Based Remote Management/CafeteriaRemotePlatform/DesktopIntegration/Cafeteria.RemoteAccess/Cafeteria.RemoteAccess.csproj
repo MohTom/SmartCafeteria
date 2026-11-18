@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Cafeteria.RemoteAccess</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\SmartCafeteria.Core\SmartCafeteria.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\src\SmartCafeteria.Services\SmartCafeteria.Services.csproj" />
+    <ProjectReference Include="..\..\Cloud\Cafeteria.Contracts\Cafeteria.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.15" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.15" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+  </ItemGroup>
+</Project>

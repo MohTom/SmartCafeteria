@@ -1,0 +1,243 @@
+<UserControl x:Class="SmartCafeteria.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:SmartCafeteria.ViewModels"
+             xmlns:views="clr-namespace:SmartCafeteria.Views">
+
+    <ScrollViewer>
+        <StackPanel Margin="0,0,0,20">
+            <!-- Header -->
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,8">
+                <TextBlock Text="الإعدادات" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+            </Border>
+
+            <!-- General Settings -->
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Text="الإعدادات العامة" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+                    
+                    <TextBlock Text="رمز العملة (عربي):" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding Settings.CurrencyAr}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+                    
+                    <TextBlock Text="رمز العملة (إنجليزي):" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding Settings.CurrencyEn}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+                    
+                    <TextBlock Text="حد التنبيه للمخزون المنخفض:" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding Settings.LowStockThreshold}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+
+                    <CheckBox Content="تفعيل ربط البيع بالمخزون" IsChecked="{Binding EnforceInventoryTracking}"
+                              AutomationProperties.Name="تفعيل ربط البيع بالمخزون" Margin="0,0,0,6"/>
+                    <TextBlock Text="عند التعطيل يمكن بيع الأصناف دون التقيد بالمخزون، وتُخفى حقول المخزون من نماذج المنتجات."
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Printing Settings -->
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Text="إعدادات الطباعة" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+                    
+                    <TextBlock Text="الطابعة:" Margin="0,0,0,4"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <ComboBox Style="{StaticResource ModernComboBox}" SelectedItem="{Binding SelectedPrinter}"
+                                  ItemsSource="{Binding AvailablePrinters}" Width="300" Margin="0,0,8,0"/>
+                        <Button Content="تحديث" Style="{StaticResource SecondaryButton}" Command="{Binding RefreshPrintersCommand}"/>
+                    </StackPanel>
+                    
+                    <TextBlock Text="طريقة الطباعة:" Margin="0,0,0,4"/>
+                    <ComboBox Style="{StaticResource ModernComboBox}" ItemsSource="{Binding PrintMethods}"
+                              SelectedItem="{Binding SelectedPrintMethod}" Margin="0,0,0,12">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource EnumArabicNameConverter}}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock Text="حجم خط الإيصال:" Margin="0,0,0,4"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <Slider x:Name="TicketFontSizeSlider" Style="{StaticResource ModernSlider}"
+                                Minimum="7" Maximum="16" TickFrequency="1" IsSnapToTickEnabled="True"
+                                Width="300" VerticalAlignment="Center"
+                                Value="{Binding TicketFontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                AutomationProperties.Name="حجم خط الإيصال"/>
+                        <TextBlock Text="{Binding TicketFontSize}" FontWeight="Bold" FontSize="14"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   VerticalAlignment="Center" Margin="12,0,0,0" MinWidth="24"
+                                   TextAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock Text="يُحفظ الحجم في ملف إعدادات منفصل ولا يؤثر على قاعدة البيانات"
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="تباعد أسطر الإيصال:" Margin="0,0,0,4"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <Slider x:Name="TicketLineSpacingSlider" Style="{StaticResource ModernSlider}"
+                                Minimum="10" Maximum="130" TickFrequency="5" IsSnapToTickEnabled="True"
+                                Width="300" VerticalAlignment="Center"
+                                Value="{Binding TicketLineSpacing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                AutomationProperties.Name="تباعد أسطر الإيصال"/>
+                        <TextBlock Text="{Binding TicketLineSpacing}" FontWeight="Bold" FontSize="14"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   VerticalAlignment="Center" Margin="12,0,0,0" MinWidth="24"
+                                   TextAlignment="Center"/>
+                        <TextBlock Text="%" FontWeight="Bold" FontSize="14"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   VerticalAlignment="Center" Margin="2,0,0,0"/>
+                    </StackPanel>
+                    <TextBlock Text="نسبة ارتفاع السطر المستخدم بين سطور الإيصال (من 10% إلى 130%، والقيمة الافتراضية 90%)"
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,12"/>
+
+                    <Button Content="طباعة صفحة تجريبية" Style="{StaticResource SecondaryButton}" HorizontalAlignment="Left"
+                            Command="{Binding TestPrintCommand}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Categories CRUD -->
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Text="فئات المنتجات" FontSize="18" FontWeight="Bold" Margin="0,0,0,4"/>
+                    <TextBlock Text="إضافة وتعديل وحذف الفئات (لا يمكن حذف فئة مستخدمة في منتجات)"
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,12"/>
+
+                    <ItemsControl ItemsSource="{Binding Categories}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10" Margin="0,0,0,8" Background="#F6F9F6" CornerRadius="8">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Category.NameAr}"
+                                                       FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center"/>
+                                            <TextBlock FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"
+                                                       VerticalAlignment="Center" Margin="8,0,0,0">
+                                                <Run Text="("/><Run Text="{Binding ProductCount, Mode=OneWay}"/><Run Text=" منتج)"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="تعديل" Style="{StaticResource SecondaryButton}" FontSize="11" Padding="10,6" Margin="0,0,6,0"
+                                                    Command="{Binding DataContext.StartEditCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Content="حذف" Style="{StaticResource DangerButton}" FontSize="11" Padding="10,6"
+                                                    Command="{Binding DataContext.DeleteCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding Category.Id}"/>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Edit panel -->
+                    <Border Background="#FFF8E6" CornerRadius="8" Padding="12" Margin="0,4,0,8"
+                            Visibility="{Binding EditingCategory, Converter={StaticResource NullToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock Text="تعديل الفئة" FontWeight="Bold" Margin="0,0,0,8"/>
+                            <TextBlock Text="الاسم بالعربي:" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding EditCategoryNameAr, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,8"/>
+                            <TextBlock Text="الاسم بالإنجليزي:" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding EditCategoryNameEn, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,8"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="حفظ" Style="{StaticResource PrimaryButton}" Margin="0,0,12,0"
+                                        Command="{Binding SaveCategoryEditCommand}"/>
+                                <Button Content="إلغاء" Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding CancelCategoryEditCommand}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Add panel -->
+                    <TextBlock Text="إضافة فئة جديدة" FontWeight="Bold" Margin="0,8,0,8"/>
+                    <TextBlock Text="الاسم بالعربي:" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding NewCategoryNameAr, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,8"/>
+                    <TextBlock Text="الاسم بالإنجليزي:" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding NewCategoryNameEn, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,8"/>
+                    <Button Content="إضافة الفئة" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left"
+                            Command="{Binding AddCategoryCommand}"/>
+                    <TextBlock Text="{Binding CategoryMessage}" Foreground="{StaticResource PrimaryBrush}" Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Cafeteria Info -->
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Text="معلومات الكافتيريا" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+                    
+                    <TextBlock Text="اسم الكافتيريا (عربي):" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding Settings.CafeteriaNameAr}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+                    
+                    <TextBlock Text="اسم الكافتيريا (إنجليزي):" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding Settings.CafeteriaNameEn}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+                    
+                    <TextBlock Text="العنوان:" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding Settings.CafeteriaAddress}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,12"/>
+                    
+                    <TextBlock Text="رقم الهاتف:" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding Settings.CafeteriaPhone}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,16"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Remote management -->
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Text="الإدارة عن بُعد" FontSize="18" FontWeight="Bold" Margin="0,0,0,4"/>
+                    <TextBlock Text="اربط هذا الجهاز بتطبيق الهاتف لمتابعة المبيعات والمخزون وإدارة المستخدمين عن بُعد."
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,10" TextWrapping="Wrap"/>
+
+                    <TextBlock Text="{Binding RemoteStatusText}" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,10"/>
+
+                    <StackPanel Visibility="{Binding IsRemoteNotLinked, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="عنوان خدمة السحابة:" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding RemoteCloudBaseUrl, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBox}" Margin="0,0,0,8"/>
+
+                        <TextBlock Text="رمز الربط من تطبيق الهاتف:" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding RemoteClaimCode, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBox}" Margin="0,0,0,8"/>
+
+                        <TextBlock Text="اسم هذا الجهاز:" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding RemoteInstallationName, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBox}" Margin="0,0,0,10"/>
+
+                        <Button Content="ربط الجهاز بالسحابة" Style="{StaticResource PrimaryButton}"
+                                HorizontalAlignment="Left"
+                                Command="{Binding LinkRemoteAccessCommand}"
+                                IsEnabled="{Binding IsRemoteBusy, Converter={StaticResource InverseBoolConverter}}"/>
+                    </StackPanel>
+
+                    <StackPanel Visibility="{Binding IsRemoteLinked, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="{Binding RemoteInstallationDisplay, StringFormat=الجهاز: {0}}" Margin="0,0,0,4"/>
+                        <TextBlock Text="{Binding RemoteCloudDisplay, StringFormat=السحابة: {0}}" Margin="0,0,0,4"/>
+                        <TextBlock Text="{Binding RemoteLocalApiDisplay, StringFormat=الخدمة المحلية: {0}}" Margin="0,0,0,10"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="{Binding RemoteActionText}" Style="{StaticResource PrimaryButton}" Margin="0,0,12,0"
+                                    Command="{Binding ToggleRemoteAccessCommand}"
+                                    IsEnabled="{Binding IsRemoteBusy, Converter={StaticResource InverseBoolConverter}}"/>
+                            <Button Content="إلغاء الربط" Style="{StaticResource SecondaryButton}"
+                                    Command="{Binding UnlinkRemoteAccessCommand}"
+                                    IsEnabled="{Binding IsRemoteBusy, Converter={StaticResource InverseBoolConverter}}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding RemoteMessage}" Foreground="{StaticResource PrimaryBrush}"
+                               Margin="0,10,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Activation -->
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Text="التفعيل" FontSize="18" FontWeight="Bold" Margin="0,0,0,4"/>
+                    <TextBlock Text="حالة الترخيص وإدارة التفعيل الشهري أو الدائم"
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,10"/>
+                    <views:ActivationPanel DataContext="{Binding Activation}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Save Button -->
+            <Button Content="حفظ الإعدادات" Style="{StaticResource PrimaryButton}" 
+                    Command="{Binding SaveSettingsCommand}" HorizontalAlignment="Left" Margin="0,0,0,12"/>
+            
+            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryBrush}"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>SmartCafeteria</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
+    <Version>1.0.0</Version>
+    <Product>Smart Cafeteria - نظام الكافتيريا الذكي</Product>
+    <Company>Smart Cafeteria</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartCafeteria.Core\SmartCafeteria.Core.csproj" />
+    <ProjectReference Include="..\SmartCafeteria.Data\SmartCafeteria.Data.csproj" />
+    <ProjectReference Include="..\SmartCafeteria.Services\SmartCafeteria.Services.csproj" />
+    <ProjectReference Include="..\SmartCafeteria.Printing\SmartCafeteria.Printing.csproj" />
+    <ProjectReference Include="..\SmartCafeteria.Licensing\SmartCafeteria.Licensing.csproj" />
+    <ProjectReference Include="..\..\Mobile Application Cloud-Based Remote Management\CafeteriaRemotePlatform\DesktopIntegration\Cafeteria.RemoteAccess\Cafeteria.RemoteAccess.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+<PackageReference Include="QuestPDF" Version="2024.12.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.15" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Fonts\Cairo.ttf" />
+    <Resource Include="Resources\AppIcon.ico" />
+    <Resource Include="Resources\AppIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SmartCafeteria.UI.Tests" />
+  </ItemGroup>
+
+</Project>
+

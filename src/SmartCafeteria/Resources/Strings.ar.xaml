@@ -1,0 +1,132 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Application Title -->
+    <sys:String x:Key="AppTitle">نظام الكافتيريا الذكي</sys:String>
+    <sys:String x:Key="AppSubtitle">نظام إدارة الكافتيريا</sys:String>
+
+    <!-- Developer credits (login footer) -->
+    <sys:String x:Key="DeveloperCredit">تم التصميم بواسطة محمد إبراهيم التوم</sys:String>
+    <sys:String x:Key="DeveloperEmail">mohammedtom904@gmail.com</sys:String>
+    <sys:String x:Key="DeveloperPhone">0129039378</sys:String>
+
+    <!-- Navigation -->
+    <sys:String x:Key="NavMenu">القائمة</sys:String>
+    <sys:String x:Key="NavCart">سلة المشتريات</sys:String>
+    <sys:String x:Key="NavOrders">الطلبات</sys:String>
+    <sys:String x:Key="NavInventory">المخزون</sys:String>
+    <sys:String x:Key="NavReports">التقارير</sys:String>
+    <sys:String x:Key="NavSettings">الإعدادات</sys:String>
+
+    <!-- Menu -->
+    <sys:String x:Key="SearchPlaceholder">بحث في القائمة...</sys:String>
+    <sys:String x:Key="AllCategories">جميع الفئات</sys:String>
+    <sys:String x:Key="AddToCart">إضافة للسلة</sys:String>
+    <sys:String x:Key="Customize">تخصيص</sys:String>
+    <sys:String x:Key="OutOfStock">نفد من المخزون</sys:String>
+    <sys:String x:Key="LowStock">مخزون منخفض</sys:String>
+
+    <!-- Cart -->
+    <sys:String x:Key="CartEmpty">سلة المشتريات فارغة</sys:String>
+    <sys:String x:Key="Quantity">الكمية</sys:String>
+    <sys:String x:Key="Customizations">التخصيصات</sys:String>
+    <sys:String x:Key="Notes">ملاحظات</sys:String>
+    <sys:String x:Key="Subtotal">المجموع الفرعي</sys:String>
+    <sys:String x:Key="ExtrasTotal">مجاني التخصيصات</sys:String>
+    <sys:String x:Key="Total">الإجمالي</sys:String>
+    <sys:String x:Key="PaymentMethod">طريقة الدفع</sys:String>
+    <sys:String x:Key="Cash">نقداً</sys:String>
+    <sys:String x:Key="Bankak">بنكك</sys:String>
+    <sys:String x:Key="PreOrder">طلب مسبق</sys:String>
+    <sys:String x:Key="PickupTime">وقت الاستلام</sys:String>
+    <sys:String x:Key="PlaceOrder">تأكيد الطلب</sys:String>
+    <sys:String x:Key="ClearCart">تفريغ السلة</sys:String>
+    <sys:String x:Key="Remove">حذف</sys:String>
+    <sys:String x:Key="OrderPlaced">تم إنشاء الطلب بنجاح</sys:String>
+
+    <!-- Orders -->
+    <sys:String x:Key="AllOrders">جميع الطلبات</sys:String>
+    <sys:String x:Key="Received">تم الاستلام</sys:String>
+    <sys:String x:Key="Preparing">قيد التحضير</sys:String>
+    <sys:String x:Key="Ready">جاهز</sys:String>
+    <sys:String x:Key="Completed">مكتمل</sys:String>
+    <sys:String x:Key="Cancelled">ملغي</sys:String>
+    <sys:String x:Key="MarkPreparing">بدء التحضير</sys:String>
+    <sys:String x:Key="MarkReady">جاهز</sys:String>
+    <sys:String x:Key="MarkCompleted">تم التسليم</sys:String>
+    <sys:String x:Key="CancelOrder">إلغاء الطلب</sys:String>
+    <sys:String x:Key="PrintReceipt">طباعة الإيصال</sys:String>
+    <sys:String x:Key="OrderCode">رقم الطلب</sys:String>
+    <sys:String x:Key="OrderDate">التاريخ</sys:String>
+    <sys:String x:Key="OrderItems">الأصناف</sys:String>
+    <sys:String x:Key="PaymentStatus">حالة الدفع</sys:String>
+
+    <!-- Inventory -->
+    <sys:String x:Key="AddProduct">إضافة منتج</sys:String>
+    <sys:String x:Key="EditProduct">تعديل المنتج</sys:String>
+    <sys:String x:Key="DeleteProduct">حذف المنتج</sys:String>
+    <sys:String x:Key="Restock">تعبئة المخزون</sys:String>
+    <sys:String x:Key="ProductNameAr">اسم المنتج بالعربي</sys:String>
+    <sys:String x:Key="ProductNameEn">اسم المنتج بالإنجليزي</sys:String>
+    <sys:String x:Key="DescriptionAr">الوصف بالعربي</sys:String>
+    <sys:String x:Key="DescriptionEn">الوصف بالإنجليزي</sys:String>
+    <sys:String x:Key="Price">السعر</sys:String>
+    <sys:String x:Key="Category">الفئة</sys:String>
+    <sys:String x:Key="ImageUrl">رابط الصورة</sys:String>
+    <sys:String x:Key="Stock">المخزون</sys:String>
+    <sys:String x:Key="MaxStock">الحد الأقصى</sys:String>
+    <sys:String x:Key="Save">حفظ</sys:String>
+    <sys:String x:Key="Cancel">إلغاء</sys:String>
+    <sys:String x:Key="ConfirmDelete">هل أنت متأكد من حذف هذا المنتج؟</sys:String>
+    <sys:String x:Key="StockStatus">حالة المخزون</sys:String>
+
+    <!-- Reports -->
+    <sys:String x:Key="Reports">التقارير</sys:String>
+    <sys:String x:Key="TotalRevenue">إجمالي الإيرادات</sys:String>
+    <sys:String x:Key="TotalOrders">إجمالي الطلبات</sys:String>
+    <sys:String x:Key="LowStockAlerts">تنبيهات المخزون المنخفض</sys:String>
+    <sys:String x:Key="DownloadSalesReport">تحميل تقرير المبيعات</sys:String>
+    <sys:String x:Key="DownloadOrdersReport">تحميل تقرير الطلبات</sys:String>
+    <sys:String x:Key="DownloadInventoryReport">تحميل تقرير المخزون</sys:String>
+    <sys:String x:Key="DateRange">نطاق التاريخ</sys:String>
+    <sys:String x:Key="StartDate">من تاريخ</sys:String>
+    <sys:String x:Key="EndDate">إلى تاريخ</sys:String>
+    <sys:String x:Key="ReportDownloaded">تم تحميل التقرير بنجاح</sys:String>
+
+    <!-- Settings -->
+    <sys:String x:Key="GeneralSettings">الإعدادات العامة</sys:String>
+    <sys:String x:Key="PrintingSettings">إعدادات الطباعة</sys:String>
+    <sys:String x:Key="CurrencyAr">رمز العملة (عربي)</sys:String>
+    <sys:String x:Key="CurrencyEn">رمز العملة (إنجليزي)</sys:String>
+    <sys:String x:Key="LowStockThreshold">حد التنبيه للمخزون المنخفض</sys:String>
+    <sys:String x:Key="CashierName">اسم الكاشير</sys:String>
+    <sys:String x:Key="StationId">رقم الكيما</sys:String>
+    <sys:String x:Key="PrinterName">اسم الطابعة</sys:String>
+    <sys:String x:Key="PrintMethod">طريقة الطباعة</sys:String>
+    <sys:String x:Key="PrintMethod1">إيصال عام + إيصالات الأقسام</sys:String>
+    <sys:String x:Key="PrintMethod2">إيصال عام مرتين (عميل + صراف)</sys:String>
+    <sys:String x:Key="CafeteriaNameAr">اسم الكافتيريا (عربي)</sys:String>
+    <sys:String x:Key="CafeteriaNameEn">اسم الكافتيريا (إنجليزي)</sys:String>
+    <sys:String x:Key="CafeteriaAddress">العنوان</sys:String>
+    <sys:String x:Key="CafeteriaPhone">رقم الهاتف</sys:String>
+    <sys:String x:Key="SaveSettings">حفظ الإعدادات</sys:String>
+    <sys:String x:Key="SettingsSaved">تم حفظ الإعدادات بنجاح</sys:String>
+
+    <!-- System Logs -->
+    <sys:String x:Key="SystemLogs">سجل العمليات</sys:String>
+    <sys:String x:Key="ClearLogs">مسح السجل</sys:String>
+
+    <!-- Common -->
+    <sys:String x:Key="Refresh">تحديث</sys:String>
+    <sys:String x:Key="Search">بحث</sys:String>
+    <sys:String x:Key="Close">إغلاق</sys:String>
+    <sys:String x:Key="Yes">نعم</sys:String>
+    <sys:String x:Key="No">لا</sys:String>
+    <sys:String x:Key="Error">خطأ</sys:String>
+    <sys:String x:Key="Success">نجاح</sys:String>
+    <sys:String x:Key="Warning">تحذير</sys:String>
+    <sys:String x:Key="Info">معلومة</sys:String>
+    <sys:String x:Key="NoData">لا توجد بيانات</sys:String>
+
+</ResourceDictionary>

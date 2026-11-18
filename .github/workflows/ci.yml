@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  desktop:
+    name: Desktop and platform (.NET)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build desktop solution
+        run: dotnet build SmartCafeteria.sln --configuration Release --nologo -m:1
+
+      - name: Test desktop non-UI projects
+        run: dotnet test SmartCafeteria.sln --configuration Release --no-build --nologo --settings SmartCafeteria.runsettings -m:1 --filter "FullyQualifiedName!~SmartCafeteria.UI.Tests"
+
+      - name: Build platform solution
+        working-directory: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform
+        run: dotnet build CafeteriaRemotePlatform.sln --configuration Release --nologo -m:1
+
+      - name: Test platform solution
+        working-directory: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform
+        run: dotnet test CafeteriaRemotePlatform.sln --configuration Release --no-build --nologo -m:1
+
+  mobile:
+    name: Mobile (Expo)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager
+    env:
+      CI: true
+      EXPO_NO_TELEMETRY: 1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test:ci
+
+      - name: Expo doctor
+        run: npm run doctor
+
+      - name: Export Android bundle
+        run: npx expo export --platform android

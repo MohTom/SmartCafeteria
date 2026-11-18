@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>SmartCafeteria.Services</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="QuestPDF" Version="2024.12.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartCafeteria.Core\SmartCafeteria.Core.csproj" />
+    <ProjectReference Include="..\SmartCafeteria.Data\SmartCafeteria.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Arabic-capable font for PDF reports (QuestPDF has no Arabic glyphs by default).
+         Linked, not copied, so the file lives only in SmartCafeteria/Fonts. -->
+    <EmbeddedResource Include="..\SmartCafeteria\Fonts\Cairo.ttf" Link="Fonts\Cairo.ttf" />
+  </ItemGroup>
+
+</Project>
+

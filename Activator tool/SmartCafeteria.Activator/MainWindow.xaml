@@ -1,0 +1,73 @@
+<Window x:Class="SmartCafeteria.Activator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="أداة تفعيل نظام الكافتيريا"
+        Height="760" Width="900"
+        MinHeight="620" MinWidth="760"
+        WindowStartupLocation="CenterScreen"
+        FlowDirection="RightToLeft"
+        FontFamily="Segoe UI"
+        Background="#F4F7F5">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="28">
+            <Border Background="#166534" CornerRadius="14" Padding="20" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="أداة تفعيل نظام الكافتيريا" Foreground="White" FontSize="24" FontWeight="Bold"/>
+                    <TextBlock Text="أدخل طلب العميل وأنشئ رمز تفعيل موقّعاً. لا تشارك المفتاح الخاص أو كلمة مروره."
+                               Foreground="#DCFCE7" FontSize="12" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="White" CornerRadius="12" Padding="18" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="طلب التفعيل من العميل" FontSize="17" FontWeight="Bold" Foreground="#166534" Margin="0,0,0,8"/>
+                    <TextBox Text="{Binding RequestCode, UpdateSourceTrigger=PropertyChanged}"
+                             Height="110" TextWrapping="Wrap" AcceptsReturn="True"
+                             VerticalContentAlignment="Top" FontFamily="Consolas"
+                             AutomationProperties.AutomationId="ActivatorRequestInput"
+                             Margin="0,0,0,10"/>
+
+                    <TextBlock Text="ملف المفتاح الخاص:" Margin="0,0,0,4"/>
+                    <DockPanel Margin="0,0,0,10">
+                        <Button DockPanel.Dock="Left" Content="استعراض" Padding="14,6" Margin="8,0,0,0"
+                                Command="{Binding BrowseKeyCommand}"/>
+                        <TextBox Text="{Binding KeyPath, UpdateSourceTrigger=PropertyChanged}"
+                                 FontFamily="Consolas" Padding="8,6"/>
+                    </DockPanel>
+
+                    <TextBlock Text="كلمة مرور المفتاح الخاص:" Margin="0,0,0,4"/>
+                    <PasswordBox x:Name="KeyPasswordBox" Padding="8,6" Margin="0,0,0,14"/>
+
+                    <Button Content="إنشاء رمز التفعيل" Padding="18,8" Background="#166534" Foreground="White"
+                            FontWeight="Bold" BorderThickness="0" HorizontalAlignment="Left"
+                            Click="Generate_Click"
+                            AutomationProperties.AutomationId="GenerateLicenseButton"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="White" CornerRadius="12" Padding="18" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="تفاصيل الطلب" FontSize="17" FontWeight="Bold" Foreground="#166534" Margin="0,0,0,8"/>
+                    <TextBlock Text="{Binding DetailsText}" TextWrapping="Wrap" FontSize="13"
+                               AutomationProperties.AutomationId="ActivatorDetails"/>
+
+                    <TextBlock Text="رمز التفعيل الجاهز للإرسال:" FontSize="17" FontWeight="Bold"
+                               Foreground="#166534" Margin="0,16,0,8"/>
+                    <TextBox Text="{Binding ActivationCode, Mode=OneWay}"
+                             Height="130" TextWrapping="Wrap" IsReadOnly="True"
+                             VerticalContentAlignment="Top" FontFamily="Consolas"
+                             AutomationProperties.AutomationId="ActivatorActivationOutput"
+                             Margin="0,0,0,10"/>
+                    <Button Content="نسخ رمز التفعيل" Padding="18,8" Background="#166534" Foreground="White"
+                            FontWeight="Bold" BorderThickness="0" HorizontalAlignment="Left"
+                            Command="{Binding CopyActivationCommand}"
+                            AutomationProperties.AutomationId="CopyActivatorCodeButton"/>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="{Binding StatusMessage}" Foreground="#166534" FontSize="13"
+                       TextWrapping="Wrap" AutomationProperties.AutomationId="ActivatorStatus"/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

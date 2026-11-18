@@ -1,0 +1,96 @@
+<UserControl x:Class="SmartCafeteria.Views.ActivationPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.AutomationId="ActivationPanel">
+
+    <StackPanel>
+        <Border Background="#F6F9F6" CornerRadius="10" Padding="12" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="{Binding LicenseStatusText}"
+                           AutomationProperties.AutomationId="LicenseStatusText"
+                           FontSize="16" FontWeight="Bold"
+                           Foreground="{StaticResource PrimaryBrush}"/>
+                <TextBlock Text="{Binding LockMessage}"
+                           AutomationProperties.AutomationId="LicenseLockMessage"
+                           Foreground="#D63232" FontSize="13" Margin="0,6,0,0"
+                           TextWrapping="Wrap"
+                           Visibility="{Binding LockMessage, Converter={StaticResource NonEmptyStringToVisibilityConverter}}"/>
+                <TextBlock Text="{Binding DeviceId, StringFormat=معرف الجهاز: {0}}"
+                           AutomationProperties.AutomationId="LicenseDeviceId"
+                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,6,0,0"/>
+                <TextBlock Text="{Binding ExpiryText}"
+                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,2,0,0"
+                           Visibility="{Binding ExpiryText, Converter={StaticResource NonEmptyStringToVisibilityConverter}}"/>
+            </StackPanel>
+        </Border>
+
+        <TabControl Background="Transparent" BorderThickness="0"
+                    AutomationProperties.AutomationId="ActivationTabs">
+            <TabItem Header="طلب التفعيل" AutomationProperties.AutomationId="ActivationRequestTab">
+                <StackPanel Margin="0,12,0,0">
+                    <TextBlock Text="اختر نوع الترخيص المطلوب ثم أنشئ رمز الطلب وأرسله إلى مزود البرنامج."
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                               TextWrapping="Wrap" Margin="0,0,0,10"/>
+                    <TextBlock Text="نوع الترخيص:" Margin="0,0,0,4"/>
+                    <ComboBox ItemsSource="{Binding LicenseKinds}"
+                              SelectedItem="{Binding SelectedLicenseKind}"
+                              DisplayMemberPath="DisplayName"
+                              IsEnabled="{Binding CanRequestActivation}"
+                              Style="{StaticResource ModernComboBox}"
+                              AutomationProperties.AutomationId="LicenseKindCombo"
+                              Margin="0,0,0,10"/>
+
+                    <Button Content="إنشاء طلب التفعيل" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding GenerateRequestCommand}"
+                            AutomationProperties.AutomationId="GenerateActivationRequestButton"
+                            HorizontalAlignment="Left" Margin="0,0,0,10"/>
+
+                    <TextBlock Text="طلب التفعيل:" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding RequestCode, Mode=OneWay}"
+                             Style="{StaticResource ModernTextBox}"
+                             AutomationProperties.AutomationId="ActivationRequestCode"
+                             Height="82" TextWrapping="Wrap" IsReadOnly="True"
+                             VerticalContentAlignment="Top" Margin="0,0,0,8"/>
+                    <Button Content="نسخ طلب التفعيل" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding CopyRequestCommand}"
+                            AutomationProperties.AutomationId="CopyActivationRequestButton"
+                            HorizontalAlignment="Left" Margin="0,0,0,8"/>
+                    <TextBlock Text="{Binding RequestMessage}"
+                               Foreground="{StaticResource PrimaryBrush}" FontSize="12"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="تفعيل" AutomationProperties.AutomationId="ActivationEntryTab">
+                <StackPanel Margin="0,12,0,0">
+                    <TextBlock Text="أدخل رمز التفعيل الذي استلمته من مزود البرنامج ثم اضغط تفعيل."
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                               TextWrapping="Wrap" Margin="0,0,0,10"/>
+                    <TextBlock Text="رمز التفعيل:" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding ActivationCode, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource ModernTextBox}"
+                             AutomationProperties.AutomationId="ActivationCodeInput"
+                             Height="82" TextWrapping="Wrap" AcceptsReturn="True"
+                             VerticalContentAlignment="Top" Margin="0,0,0,8"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button Content="تفعيل البرنامج" Style="{StaticResource PrimaryButton}"
+                                Command="{Binding ActivateCommand}"
+                                AutomationProperties.AutomationId="ActivateLicenseButton"
+                                Margin="0,0,8,0"/>
+                        <Button Content="نسخ رمز التفعيل" Style="{StaticResource SecondaryButton}"
+                                Command="{Binding CopyActivationCommand}"
+                                AutomationProperties.AutomationId="CopyLicenseCodeButton"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding ActivationMessage}"
+                               Foreground="{StaticResource PrimaryBrush}" FontSize="12"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+        <Button Content="تحديث حالة الترخيص" Style="{StaticResource SecondaryButton}"
+                Command="{Binding RefreshStatusCommand}"
+                AutomationProperties.AutomationId="RefreshLicenseStatusButton"
+                HorizontalAlignment="Left" Margin="0,12,0,0"/>
+    </StackPanel>
+</UserControl>

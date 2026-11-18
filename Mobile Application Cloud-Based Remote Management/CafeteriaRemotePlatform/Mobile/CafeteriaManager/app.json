@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Cafeteria Manager",
+    "slug": "cafeteria-manager",
+    "version": "1.0.0",
+    "scheme": "cafeteriamanager",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smartcafeteria.manager"
+    },
+    "android": {
+      "package": "com.smartcafeteria.manager",
+      "adaptiveIcon": {
+        "backgroundColor": "#0F5132",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "color": "#0F5132"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

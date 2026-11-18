@@ -1,0 +1,11 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputName>SmartCafeteria-Setup-1.0.0</OutputName>
+    <OutputType>Package</OutputType>
+    <Platform>x64</Platform>
+    <SuppressIces>ICE60</SuppressIces>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
+  </ItemGroup>
+</Project>
