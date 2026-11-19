@@ -314,14 +314,20 @@ jobs:
           script: |
             mkdir -p "$GITHUB_WORKSPACE/maestro-results"
             adb install -r "$GITHUB_WORKSPACE/Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager/android/app/build/outputs/apk/debug/app-debug.apk"
-            maestro test --format junit --output "$GITHUB_WORKSPACE/maestro-results/report.xml" --env E2E_EMAIL="$E2E_EMAIL" --env E2E_PASSWORD="$E2E_PASSWORD" "$GITHUB_WORKSPACE/.maestro/flows"
+            status=0
+            maestro test --format junit --output "$GITHUB_WORKSPACE/maestro-results/report.xml" --env E2E_EMAIL="$E2E_EMAIL" --env E2E_PASSWORD="$E2E_PASSWORD" "$GITHUB_WORKSPACE/.maestro/flows" || status=$?
+            adb shell uiautomator dump /sdcard/window.xml > "$GITHUB_WORKSPACE/maestro-results/uiautomator.txt" 2>&1 || true
+            adb pull /sdcard/window.xml "$GITHUB_WORKSPACE/maestro-results/window.xml" || true
+            adb shell dumpsys window > "$GITHUB_WORKSPACE/maestro-results/window-dumpsys.txt" 2>&1 || true
+            adb logcat -d > "$GITHUB_WORKSPACE/maestro-results/logcat.txt" 2>&1 || true
+            exit "$status"
 
       - name: Upload Maestro results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: maestro-results
-          path: maestro-results/report.xml
+          path: maestro-results/
           if-no-files-found: error
 
       - name: Dump API log on failure
