@@ -6,7 +6,10 @@ tags:
 ---
 - launchApp:
     clearState: true
-- assertVisible: "Cafeteria Manager"
+- extendedWaitUntil:
+    visible:
+      id: "login.email"
+    timeout: 30000
 - tapOn:
     id: "login.email"
 - inputText: "${E2E_EMAIL}"
