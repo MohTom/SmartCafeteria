@@ -175,3 +175,162 @@ jobs:
           if [ -f "$RUNNER_TEMP/cafeteria-api.pid" ]; then
             kill "$(cat "$RUNNER_TEMP/cafeteria-api.pid")" 2>/dev/null || true
           fi
+
+  maestro:
+    name: Maestro (Android E2E)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      ConnectionStrings__Default: "Host=localhost;Port=5432;Database=cafeteria_maestro;Username=postgres;Password=postgres"
+      Jwt__UserSigningKey: "e2e-user-signing-key-0123456789-abcdefghijklmnop"
+      Jwt__InstallationSigningKey: "e2e-installation-signing-key-0123456789-qrstuvwxyz"
+      Database__AutoMigrate: "true"
+      ASPNETCORE_URLS: "http://0.0.0.0:5080"
+      CI: "true"
+      EXPO_NO_TELEMETRY: "1"
+      MAESTRO_CLI_NO_ANALYTICS: "true"
+      MAESTRO_DISABLE_UPDATE_CHECK: "true"
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: cafeteria_maestro
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d cafeteria_maestro"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager/package-lock.json
+
+      - name: Install mobile dependencies
+        working-directory: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager
+        run: npm ci
+
+      - name: Expo prebuild Android
+        working-directory: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager
+        run: npx expo prebuild --platform android --clean
+
+      - name: Build debug APK
+        working-directory: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager/android
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :app:assembleDebug --no-daemon -PreactNativeArchitectures=x86_64
+
+      - name: Build and start API
+        working-directory: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform
+        run: |
+          dotnet build Cloud/Cafeteria.Api/Cafeteria.Api.csproj --configuration Release --nologo
+          dotnet run --project Cloud/Cafeteria.Api/Cafeteria.Api.csproj --configuration Release --no-build > "$RUNNER_TEMP/cafeteria-api.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/cafeteria-api.pid"
+          healthy=false
+          for i in {1..60}; do
+            if curl -fsS http://localhost:5080/health > /dev/null 2>&1; then
+              healthy=true
+              break
+            fi
+            sleep 2
+          done
+          if [ "$healthy" != true ]; then
+            echo "API did not start"
+            tail -n 100 "$RUNNER_TEMP/cafeteria-api.log" || true
+            exit 1
+          fi
+          curl -fsS http://localhost:5080/health | jq -e '.status == "ok"'
+
+      - name: Seed E2E account installation and command
+        run: |
+          base=http://localhost:5080
+          stamp=$(date +%s)
+          email="maestro+$stamp@example.test"
+          password="Mae5tro!$stamp"
+          register=$(jq -n --arg company "Maestro $stamp" --arg email "$email" --arg password "$password" '{companyName: $company, ownerEmail: $email, ownerDisplayName: "Maestro Owner", password: $password}')
+          curl -fsS -X POST -H 'Content-Type: application/json' -d "$register" "$base/api/auth/register" > /dev/null
+          login=$(jq -n --arg email "$email" --arg password "$password" '{email: $email, password: $password}')
+          auth=$(curl -fsS -X POST -H 'Content-Type: application/json' -d "$login" "$base/api/auth/login")
+          tenant=$(echo "$auth" | jq -er '.user.tenants[0].id')
+          userToken=$(echo "$auth" | jq -er '.tokens.accessToken')
+          claim=$(curl -fsS -X POST -H "Authorization: Bearer $userToken" "$base/api/tenants/$tenant/installations/claim-codes")
+          code=$(echo "$claim" | jq -er '.code')
+          claimRequest=$(jq -n --arg code "$code" '{code: $code, name: "Maestro Desktop", machineName: "MAESTRO-PC", appVersion: "1.0.0"}')
+          claimed=$(curl -fsS -X POST -H 'Content-Type: application/json' -d "$claimRequest" "$base/api/installations/claim")
+          installationId=$(echo "$claimed" | jq -er '.installationId')
+          installationSecret=$(echo "$claimed" | jq -er '.installationSecret')
+          tokenRequest=$(jq -n --arg installationId "$installationId" --arg installationSecret "$installationSecret" '{installationId: $installationId, installationSecret: $installationSecret}')
+          token=$(curl -fsS -X POST -H 'Content-Type: application/json' -d "$tokenRequest" "$base/api/installations/token")
+          installationToken=$(echo "$token" | jq -er '.accessToken')
+          curl -fsS -X POST -H "Authorization: Bearer $installationToken" -H 'Content-Type: application/json' -d '{"appVersion":"1.0.0"}' "$base/api/installations/heartbeat" > /dev/null
+          commandRequest=$(jq -n --arg installationId "$installationId" --arg idempotencyKey "maestro-$stamp" '{installationId: $installationId, type: "dashboard.snapshot", payloadJson: "{}", idempotencyKey: $idempotencyKey}')
+          curl -fsS -X POST -H "Authorization: Bearer $userToken" -H 'Content-Type: application/json' -d "$commandRequest" "$base/api/tenants/$tenant/commands" > /dev/null
+          {
+            echo "E2E_EMAIL=$email"
+            echo "E2E_PASSWORD=$password"
+          } >> "$GITHUB_ENV"
+
+      - name: Install Maestro CLI
+        run: |
+          export MAESTRO_VERSION=2.4.0
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run Maestro flows
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          disable-animations: true
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            mkdir -p "$GITHUB_WORKSPACE/maestro-results"
+            adb install -r "$GITHUB_WORKSPACE/Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager/android/app/build/outputs/apk/debug/app-debug.apk"
+            maestro test --format junit --output "$GITHUB_WORKSPACE/maestro-results/report.xml" --env E2E_EMAIL="$E2E_EMAIL" --env E2E_PASSWORD="$E2E_PASSWORD" "$GITHUB_WORKSPACE/.maestro/flows"
+
+      - name: Upload Maestro results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-results
+          path: maestro-results/report.xml
+          if-no-files-found: error
+
+      - name: Dump API log on failure
+        if: failure()
+        run: tail -n 100 "$RUNNER_TEMP/cafeteria-api.log" || true
+
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/cafeteria-api.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/cafeteria-api.pid")" 2>/dev/null || true
+          fi

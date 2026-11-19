@@ -1,0 +1,32 @@
+appId: com.smartcafeteria.manager
+name: Login and tab navigation
+tags:
+  - smoke
+  - navigation
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Cafeteria Manager"
+- tapOn:
+    id: "login.email"
+- inputText: "${E2E_EMAIL}"
+- tapOn:
+    id: "login.password"
+- inputText: "${E2E_PASSWORD}"
+- tapOn:
+    id: "login.signIn"
+- extendedWaitUntil:
+    visible: "Choose an installation"
+    timeout: 30000
+- tapOn: "Maestro Desktop"
+- extendedWaitUntil:
+    visible: "Live overview"
+    timeout: 30000
+- tapOn: "Reports"
+- assertVisible: "Sales reports"
+- tapOn: "Inventory"
+- assertVisible: "Stock control"
+- tapOn: "Alerts"
+- assertVisible: "Notifications"
+- tapOn: "Settings"
+- assertVisible: "Settings"

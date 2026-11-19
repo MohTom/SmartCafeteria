@@ -142,12 +142,14 @@ export default function SettingsScreen() {
           label={t('changeInstallation')}
           variant="secondary"
           compact
+          testID="settings.changeInstallation"
           onPress={() => router.replace('/installations')}
         />
         <Button
           label={t('openHistory')}
           variant="ghost"
           compact
+          testID="settings.openHistory"
           onPress={() => router.push('/history')}
         />
       </Card>

@@ -84,12 +84,14 @@ export default function LoginScreen() {
             onChangeText={setEmail}
             placeholder="manager@company.com"
             keyboardType="email-address"
+            testID="login.email"
           />
           <TextField
             label={t('password')}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            testID="login.password"
           />
 
           {error ? (
@@ -98,7 +100,7 @@ export default function LoginScreen() {
             </AppText>
           ) : null}
 
-          <Button label={t('signIn')} onPress={submit} loading={busy} />
+          <Button label={t('signIn')} onPress={submit} loading={busy} testID="login.signIn" />
 
           <Pressable onPress={() => setAdvanced((value) => !value)}>
             <AppText size={13} color={colors.textMuted} weight="600">
@@ -114,6 +116,7 @@ export default function LoginScreen() {
                 onChangeText={setApiUrl}
                 placeholder="https://cloud.example.com"
                 keyboardType="url"
+                testID="login.apiUrl"
               />
               <AppText size={12} color={colors.textMuted}>
                 {t('apiUrlHint')}

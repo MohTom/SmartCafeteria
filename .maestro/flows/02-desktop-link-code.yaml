@@ -1,0 +1,37 @@
+appId: com.smartcafeteria.manager
+name: Desktop link code
+tags:
+  - smoke
+  - desktop-link
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Cafeteria Manager"
+- tapOn:
+    id: "login.email"
+- inputText: "${E2E_EMAIL}"
+- tapOn:
+    id: "login.password"
+- inputText: "${E2E_PASSWORD}"
+- tapOn:
+    id: "login.signIn"
+- extendedWaitUntil:
+    visible: "Choose an installation"
+    timeout: 30000
+- tapOn: "Maestro Desktop"
+- extendedWaitUntil:
+    visible: "Live overview"
+    timeout: 30000
+- tapOn: "Settings"
+- assertVisible: "Settings"
+- tapOn:
+    id: "settings.changeInstallation"
+- extendedWaitUntil:
+    visible: "Choose an installation"
+    timeout: 30000
+- assertVisible: "Link a desktop"
+- tapOn:
+    id: "linkDesktop.generateCode"
+- extendedWaitUntil:
+    visible: "Expires"
+    timeout: 30000

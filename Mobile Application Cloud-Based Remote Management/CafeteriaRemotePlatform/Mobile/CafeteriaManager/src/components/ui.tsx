@@ -141,7 +141,8 @@ export function Button({
   variant = 'primary',
   loading = false,
   disabled = false,
-  compact = false
+  compact = false,
+  testID
 }: {
   label: string;
   onPress: () => void;
@@ -149,10 +150,12 @@ export function Button({
   loading?: boolean;
   disabled?: boolean;
   compact?: boolean;
+  testID?: string;
 }) {
   const isDisabled = disabled || loading;
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       onPress={onPress}
       disabled={isDisabled}
@@ -194,7 +197,8 @@ export function TextField({
   keyboardType,
   autoCapitalize = 'none',
   multiline = false,
-  editable = true
+  editable = true,
+  testID
 }: {
   label?: string;
   value: string;
@@ -205,6 +209,7 @@ export function TextField({
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   multiline?: boolean;
   editable?: boolean;
+  testID?: string;
 }) {
   const { textAlign, language } = useI18n();
   return (
@@ -215,6 +220,7 @@ export function TextField({
         </AppText>
       ) : null}
       <TextInput
+        testID={testID}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}

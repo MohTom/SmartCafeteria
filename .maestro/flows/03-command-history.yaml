@@ -1,0 +1,32 @@
+appId: com.smartcafeteria.manager
+name: Remote command history
+tags:
+  - smoke
+  - commands
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Cafeteria Manager"
+- tapOn:
+    id: "login.email"
+- inputText: "${E2E_EMAIL}"
+- tapOn:
+    id: "login.password"
+- inputText: "${E2E_PASSWORD}"
+- tapOn:
+    id: "login.signIn"
+- extendedWaitUntil:
+    visible: "Choose an installation"
+    timeout: 30000
+- tapOn: "Maestro Desktop"
+- extendedWaitUntil:
+    visible: "Live overview"
+    timeout: 30000
+- tapOn: "Settings"
+- assertVisible: "Settings"
+- tapOn:
+    id: "settings.openHistory"
+- extendedWaitUntil:
+    visible: "Remote command history"
+    timeout: 30000
+- assertVisible: "dashboard.snapshot"

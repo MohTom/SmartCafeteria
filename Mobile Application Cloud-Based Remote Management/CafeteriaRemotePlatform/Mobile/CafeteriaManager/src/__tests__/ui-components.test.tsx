@@ -100,6 +100,18 @@ describe('ui components', () => {
     expect(onChangeText).toHaveBeenCalledWith('new@example.test');
   });
 
+  it('exposes test identifiers for Maestro', async () => {
+    await render(
+      <>
+        <Button label="Sign in" onPress={jest.fn()} testID="login.signIn" />
+        <TextField label="Email" value="" onChangeText={jest.fn()} testID="login.email" />
+      </>
+    );
+
+    expect(screen.getByTestId('login.signIn')).toBeTruthy();
+    expect(screen.getByTestId('login.email')).toBeTruthy();
+  });
+
   it('renders badges, metrics, empty states, and error banners', async () => {
     const onRetry = jest.fn();
     await render(

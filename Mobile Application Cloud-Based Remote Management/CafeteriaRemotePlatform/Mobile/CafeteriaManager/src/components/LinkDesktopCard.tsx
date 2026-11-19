@@ -57,6 +57,7 @@ export function LinkDesktopCard({ compact = false }: { compact?: boolean }) {
         onPress={generate}
         loading={busy}
         variant={claim ? 'secondary' : 'primary'}
+        testID="linkDesktop.generateCode"
       />
     </Card>
   );
