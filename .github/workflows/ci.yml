@@ -74,3 +74,104 @@ jobs:
 
       - name: Export Android bundle
         run: npx expo export --platform android
+
+  integration:
+    name: Integration (PostgreSQL live API)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform
+    env:
+      ConnectionStrings__Default: "Host=localhost;Port=5432;Database=cafeteria_ci;Username=postgres;Password=postgres"
+      Jwt__UserSigningKey: "ci-user-signing-key-0123456789-abcdefghijklmnop"
+      Jwt__InstallationSigningKey: "ci-installation-signing-key-0123456789-qrstuvwxyz"
+      Database__AutoMigrate: "true"
+      ASPNETCORE_URLS: "http://localhost:5080"
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: cafeteria_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d cafeteria_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build API
+        run: dotnet build Cloud/Cafeteria.Api/Cafeteria.Api.csproj --configuration Release --nologo
+
+      - name: Start API
+        run: |
+          dotnet run --project Cloud/Cafeteria.Api/Cafeteria.Api.csproj --configuration Release --no-build > "$RUNNER_TEMP/cafeteria-api.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/cafeteria-api.pid"
+
+      - name: Wait for API health
+        run: |
+          for i in {1..60}; do
+            if curl -fsS http://localhost:5080/health > /dev/null 2>&1; then
+              break
+            fi
+            sleep 2
+          done
+          curl -fsS http://localhost:5080/health | jq -e '.status == "ok"'
+
+      - name: Live command lifecycle smoke
+        run: |
+          base=http://localhost:5080
+          stamp=$(date +%s)
+          email="smoke+$stamp@example.test"
+          password="Sm0ke!$stamp"
+          register=$(jq -n --arg company "Smoke $stamp" --arg email "$email" --arg password "$password" '{companyName: $company, ownerEmail: $email, ownerDisplayName: "Smoke Owner", password: $password}')
+          curl -fsS -X POST -H 'Content-Type: application/json' -d "$register" "$base/api/auth/register" > /dev/null
+          login=$(jq -n --arg email "$email" --arg password "$password" '{email: $email, password: $password}')
+          auth=$(curl -fsS -X POST -H 'Content-Type: application/json' -d "$login" "$base/api/auth/login")
+          tenant=$(echo "$auth" | jq -r '.user.tenants[0].id')
+          userToken=$(echo "$auth" | jq -r '.tokens.accessToken')
+          claim=$(curl -fsS -X POST -H "Authorization: Bearer $userToken" "$base/api/tenants/$tenant/installations/claim-codes")
+          code=$(echo "$claim" | jq -r '.code')
+          claimRequest=$(jq -n --arg code "$code" '{code: $code, name: "Smoke Desktop", machineName: "SMOKE-PC", appVersion: "1.0.0"}')
+          claimed=$(curl -fsS -X POST -H 'Content-Type: application/json' -d "$claimRequest" "$base/api/installations/claim")
+          installationId=$(echo "$claimed" | jq -r '.installationId')
+          installationSecret=$(echo "$claimed" | jq -r '.installationSecret')
+          tokenRequest=$(jq -n --arg installationId "$installationId" --arg installationSecret "$installationSecret" '{installationId: $installationId, installationSecret: $installationSecret}')
+          token=$(curl -fsS -X POST -H 'Content-Type: application/json' -d "$tokenRequest" "$base/api/installations/token")
+          installationToken=$(echo "$token" | jq -r '.accessToken')
+          installationAuth="Authorization: Bearer $installationToken"
+          heartbeat=$(jq -n '{appVersion: "1.0.0"}')
+          curl -fsS -X POST -H "$installationAuth" -H 'Content-Type: application/json' -d "$heartbeat" "$base/api/installations/heartbeat" > /dev/null
+          commandRequest=$(jq -n --arg installationId "$installationId" --arg idempotencyKey "smoke-$stamp" '{installationId: $installationId, type: "dashboard.snapshot", payloadJson: "{}", idempotencyKey: $idempotencyKey}')
+          created=$(curl -fsS -X POST -H "Authorization: Bearer $userToken" -H 'Content-Type: application/json' -d "$commandRequest" "$base/api/tenants/$tenant/commands")
+          commandId=$(echo "$created" | jq -r '.id')
+          pending=$(curl -fsS -H "$installationAuth" "$base/api/installations/commands/pending")
+          echo "$pending" | jq -e --arg commandId "$commandId" 'any(.[]; .id == $commandId)' > /dev/null
+          curl -fsS -X POST -H "$installationAuth" "$base/api/installations/commands/$commandId/ack" > /dev/null
+          complete=$(jq -n '{success: true, resultJson: "{\"ok\":true}", error: null}')
+          curl -fsS -X POST -H "$installationAuth" -H 'Content-Type: application/json' -d "$complete" "$base/api/installations/commands/$commandId/complete" > /dev/null
+          final=$(curl -fsS -H "Authorization: Bearer $userToken" "$base/api/tenants/$tenant/commands/$commandId")
+          echo "$final" | jq -e '.status == "Completed"' > /dev/null
+          echo "LIVE_SMOKE_OK command=$commandId status=$(echo "$final" | jq -r '.status')"
+
+      - name: Dump API log on failure
+        if: failure()
+        run: tail -n 100 "$RUNNER_TEMP/cafeteria-api.log" || true
+
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/cafeteria-api.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/cafeteria-api.pid")" 2>/dev/null || true
+          fi
