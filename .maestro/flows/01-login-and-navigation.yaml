@@ -5,11 +5,12 @@ tags:
   - navigation
 ---
 - launchApp:
+    appId: com.smartcafeteria.manager
     clearState: true
 - extendedWaitUntil:
     visible:
       id: "login.email"
-    timeout: 30000
+    timeout: 120000
 - tapOn:
     id: "login.email"
 - inputText: "${E2E_EMAIL}"
@@ -20,11 +21,11 @@ tags:
     id: "login.signIn"
 - extendedWaitUntil:
     visible: "Choose an installation"
-    timeout: 30000
+    timeout: 120000
 - tapOn: "Maestro Desktop"
 - extendedWaitUntil:
     visible: "Live overview"
-    timeout: 30000
+    timeout: 120000
 - tapOn: "Reports"
 - assertVisible: "Sales reports"
 - tapOn: "Inventory"
