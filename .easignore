@@ -1,0 +1,47 @@
+.git
+Activator tool/
+installer/
+Resources/
+*.md
+*.txt
+*.bak
+Directory.Build.props
+SmartCafeteria.runsettings
+SmartCafeteria.sln
+**/node_modules/
+**/artifacts/
+**/dist/
+**/coverage/
+**/TestResults/
+**/publish/
+**/.expo/
+**/.gradle/
+**/.cxx/
+**/build/
+**/bin/
+**/obj/
+**/عـــــــام 2009 استقطاب/
+**/لقاء القيادات حول موضوع التأمين الذاتي/
+**/مدائح/
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/*.log
+**/*.tmp
+**/.env
+**/.env.*
+**/appsettings.json
+**/appsettings.*.json
+**/*.pfx
+**/*.p12
+**/*.pk8
+**/*.spki
+**/*.snk
+**/*.jks
+**/*.keystore
+**/*.p8
+**/*.pem
+**/*.key
+**/*.cer
+**/*.crt
+**/*.mobileprovision

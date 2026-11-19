@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.smartcafeteria.manager"
+      "bundleIdentifier": "com.smartcafeteria.manager",
+      "infoPlist": {}
     },
     "android": {
       "package": "com.smartcafeteria.manager",
@@ -19,7 +20,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "versionCode": 5
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +40,17 @@
     ],
     "experiments": {
       "typedRoutes": false
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "ae3860ea-e4d4-434e-aec5-29245bd2b422"
+      }
+    },
+    "owner": "mohatom"
   }
 }
