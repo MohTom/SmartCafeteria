@@ -1150,3 +1150,39 @@ activation, Arabic Activator, Settings activation panel) with a working WiX 6 in
   not known to use the affected code path, and all mobile unit, lint, typecheck, doctor, and
   bundle-export gates pass.
 
+## Maestro Android E2E and CI (2026-11-19)
+
+### Pushed commits
+- `74cda0b test: add Maestro Android E2E flows` — added `.maestro/flows/01-login-and-navigation.yaml`,
+  `02-desktop-link-code.yaml`, `03-command-history.yaml`; added Maestro `testID`s to login/settings/
+  link-desktop UI and `ui-components` test; added `Maestro (Android E2E)` job in
+  `.github/workflows/ci.yml` (PostgreSQL service, real API, seeded E2E account/installation/command,
+  x86_64 debug APK, reactivecircus emulator, Maestro JUnit artifact).
+- `cda425f test: wait for login screen in Maestro flows` — replaced immediate title assertion with
+  `extendedWaitUntil visible id: login.email`.
+- `aac4623 test: extend Maestro cold-start waits` — explicit `appId` and 120s waits for cold emulator.
+- `ddf6d49 ci: capture Maestro UI diagnostics` — upload UI hierarchy, window dump, logcat, and JUnit.
+- `4716cba ci: bundle JS in Maestro debug APK` — set `debuggableVariants = []` after Expo prebuild and
+  verify `assets/index.android.bundle` in the debug APK.
+
+### CI status
+- Run `44564397302` (`4716cba`): `Desktop and platform (.NET)`, `Mobile (Expo)`,
+  `Integration (PostgreSQL live API)` green; `Maestro (Android E2E)` failed 2/3 passed.
+- Passing flows: `01-login-and-navigation`, `03-command-history`.
+- Failing flow: `02-desktop-link-code` timed out on `visible: "Expires"` after generating a claim code;
+  UI dump showed the code and expiry rendered, indicating a text-selector reliability issue.
+
+### Uncommitted local fix (pending approval)
+- `Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager/src/components/LinkDesktopCard.tsx`
+  adds `testID="linkDesktop.claimCode"` on the claim-code container.
+- `.maestro/flows/02-desktop-link-code.yaml` waits for `id: linkDesktop.claimCode`.
+- `Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager/src/__tests__/ui-components.test.tsx`
+  includes coverage for the new test identifier.
+- Local verification: `jest --runInBand src/__tests__/ui-components.test.tsx` passed (1 suite, 8 tests).
+
+### Next
+- Get approval to commit/push the claim-code selector fix and rerun CI until all four jobs pass.
+- After green CI: physical device/emulator smoke for login/navigation/SignalR/notifications/RTL.
+- Still blocked/deferred: clean-machine per-machine MSI install (self-signed cert), SMTP/Apple/Google push creds.
+
+

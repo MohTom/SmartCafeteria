@@ -40,7 +40,7 @@ export function LinkDesktopCard({ compact = false }: { compact?: boolean }) {
       </AppText>
 
       {claim ? (
-        <View style={styles.codeBox}>
+        <View style={styles.codeBox} testID="linkDesktop.claimCode">
           <AppText size={30} weight="700" align="center" selectable style={styles.code}>
             {claim.code}
           </AppText>

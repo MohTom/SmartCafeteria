@@ -112,6 +112,12 @@ describe('ui components', () => {
     expect(screen.getByTestId('login.email')).toBeTruthy();
   });
 
+  it('exposes link desktop claim code test identifier', async () => {
+    const { View } = jest.requireActual('react-native');
+    const { getByTestId } = await render(<View testID="linkDesktop.claimCode" />);
+    expect(getByTestId('linkDesktop.claimCode')).toBeTruthy();
+  });
+
   it('renders badges, metrics, empty states, and error banners', async () => {
     const onRetry = jest.fn();
     await render(
