@@ -324,36 +324,17 @@ jobs:
           script: |
             mkdir -p "$GITHUB_WORKSPACE/maestro-results"
             adb install -r "$GITHUB_WORKSPACE/Mobile Application Cloud-Based Remote Management/CafeteriaRemotePlatform/Mobile/CafeteriaManager/android/app/build/outputs/apk/debug/app-debug.apk"
-            dismiss_system_dialogs() {
-              adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
-              for _ in 1 2 3 4 5; do
-                adb shell uiautomator dump /sdcard/uidump.xml >/dev/null 2>&1 || true
-                adb pull /sdcard/uidump.xml "$GITHUB_WORKSPACE/maestro-results/uidump-check.xml" >/dev/null 2>&1 || true
-                if [ -f "$GITHUB_WORKSPACE/maestro-results/uidump-check.xml" ] && grep -q "isn't responding" "$GITHUB_WORKSPACE/maestro-results/uidump-check.xml"; then
-                  cat > "$RUNNER_TEMP/dismiss_anr.py" <<'PY'
-            import os, re, subprocess, xml.etree.ElementTree as ET
-            path = os.path.join(os.environ["GITHUB_WORKSPACE"], "maestro-results", "uidump-check.xml")
-            try:
-                root = ET.parse(path).getroot()
-            except Exception:
-                raise SystemExit(0)
-            for label in ("Wait", "Close app"):
-                for node in root.iter("node"):
-                    if node.attrib.get("text") == label:
-                        m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", node.attrib.get("bounds", ""))
-                        if m:
-                            x1, y1, x2, y2 = map(int, m.groups())
-                            subprocess.run(["adb", "shell", "input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2)], check=False)
-                            raise SystemExit(0)
-            PY
-                  python3 "$RUNNER_TEMP/dismiss_anr.py" || true
-                  sleep 2
-                else
-                  break
-                fi
-              done
-            }
-            dismiss_system_dialogs
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+            for _ in 1 2 3 4 5; do
+              adb shell uiautomator dump /sdcard/uidump.xml >/dev/null 2>&1 || true
+              adb pull /sdcard/uidump.xml "$GITHUB_WORKSPACE/maestro-results/uidump-check.xml" >/dev/null 2>&1 || true
+              if [ -f "$GITHUB_WORKSPACE/maestro-results/uidump-check.xml" ] && grep -q "isn't responding" "$GITHUB_WORKSPACE/maestro-results/uidump-check.xml"; then
+                python3 -c "import os,re,subprocess,xml.etree.ElementTree as ET; p=os.path.join(os.environ['GITHUB_WORKSPACE'],'maestro-results','uidump-check.xml'); exec('try:\\n root=ET.parse(p).getroot()\\nexcept Exception:\\n raise SystemExit(0)\\nfor label in (\"Wait\",\"Close app\"):\\n for node in root.iter(\"node\"):\\n  if node.attrib.get(\"text\")==label:\\n   m=re.match(r\"\\[(\\d+),(\\d+)\\]\\[(\\d+),(\\d+)\\]\",node.attrib.get(\"bounds\",\"\"))\\n   if m:\\n    x1,y1,x2,y2=map(int,m.groups()); subprocess.run([\"adb\",\"shell\",\"input\",\"tap\",str((x1+x2)//2),str((y1+y2)//2)],check=False); raise SystemExit(0)')" || true
+                sleep 2
+              else
+                break
+              fi
+            done
             status=0
             maestro test --format junit --output "$GITHUB_WORKSPACE/maestro-results/report.xml" --env E2E_EMAIL="$E2E_EMAIL" --env E2E_PASSWORD="$E2E_PASSWORD" "$GITHUB_WORKSPACE/.maestro/flows" || status=$?
             adb shell uiautomator dump /sdcard/window.xml > "$GITHUB_WORKSPACE/maestro-results/uiautomator.txt" 2>&1 || true
